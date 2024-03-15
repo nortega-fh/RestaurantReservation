@@ -13,16 +13,20 @@ public class CustomerRepository : ICustomerRepository
         _customerCollection = database.GetDatabase().GetCollection<Customer>("Customers");
     }
 
-    public async Task<IEnumerable<Customer>> GetAllAsync() => await _customerCollection.Find(_ => true).ToListAsync();
+    public async Task<IEnumerable<Customer>> GetAllAsync(int pageNumber, int pageSize)
+    {
+        var noFilter = Builders<Customer>.Filter.Empty;
+        return (await _customerCollection.FindAsync(noFilter))
+            .ToEnumerable()
+            .Skip(pageSize * pageNumber - pageSize)
+            .Take(pageSize);
+    }  
 
     public async Task<Customer> GetByIdAsync(string id) =>
         await _customerCollection.Find(customer => customer.Id.Equals(id)).FirstAsync();
     
 
-    public async Task CreateAsync(Customer customer)
-    {
-        await _customerCollection.InsertOneAsync(customer);
-    }
+    public async Task CreateAsync(Customer customer) => await _customerCollection.InsertOneAsync(customer);
 
     public async Task UpdateAsync(string id, Customer customer)
     {
@@ -30,8 +34,6 @@ public class CustomerRepository : ICustomerRepository
         await _customerCollection.ReplaceOneAsync(findById, customer);
     }
 
-    public async Task DeleteAsync(string id)
-    {
-        await _customerCollection.DeleteOneAsync(customer => customer.Id.Equals(id));
-    }
+    public async Task DeleteAsync(string id) 
+        => await _customerCollection.DeleteOneAsync(customer => customer.Id.Equals(id));
 }

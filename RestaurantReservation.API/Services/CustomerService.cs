@@ -12,7 +12,8 @@ public class CustomerService : ICustomerService
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
-    public async Task<IEnumerable<Customer>> GetAllAsync() => await _repository.GetAllAsync();
+    public async Task<IEnumerable<Customer>> GetAllAsync(int pageNumber, int pageSize) 
+        => await _repository.GetAllAsync(pageNumber, pageSize);
 
     public async Task<Customer> GetByIdAsync(string id) => await _repository.GetByIdAsync(id);
 
