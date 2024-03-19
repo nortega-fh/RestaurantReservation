@@ -14,15 +14,13 @@ public class CustomerController : ControllerBase
 {
    private readonly ICustomerService _customerService;
    private readonly IMapper _mapper;
-   private readonly IValidator<CustomerCreateDto> _validator;
    private const int DefaultPageSize = 20;
    private const int DefaultPageNumber = 1;
 
-   public CustomerController(ICustomerService customerService, IMapper mapper, IValidator<CustomerCreateDto> validator)
+   public CustomerController(ICustomerService customerService, IMapper mapper)
    {
       _customerService = customerService ?? throw new ArgumentNullException(nameof(customerService));
       _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-      _validator = validator ?? throw new ArgumentNullException(nameof(validator));
    }
    
    [HttpGet] 
@@ -38,19 +36,9 @@ public class CustomerController : ControllerBase
    [HttpPost]
    public async Task<IActionResult> CreateCustomer(CustomerCreateDto createdCustomer)
    {
-      var validationResult = _validator.Validate(createdCustomer);
-      if (!validationResult.IsValid)
-      {
-         var errorResponse = new ErrorResponse
-         {
-             RequestPath = HttpContext.Request.Path,
-             Errors = validationResult.ToDictionary()
-         };
-         return BadRequest(errorResponse);
-      }
       var customer = _mapper.Map<Customer>(createdCustomer);
       await _customerService.CreateAsync(customer);
-      return Ok(customer);
+      return Created(Request.Path, customer);
    }
 
    [HttpDelete("{customerId}")]
