@@ -1,4 +1,5 @@
 using FluentValidation;
+using Microsoft.IdentityModel.Tokens;
 using RestaurantReservation.API.Dtos.Requests;
 using RestaurantReservation.API.Filters;
 using RestaurantReservation.API.Repositories;
@@ -23,6 +24,18 @@ builder.Services.AddScoped<ICustomerService, CustomerService>();
 
 builder.Services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
 
+builder.Services.AddAuthentication("Bearer").AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Auth:Issuer"],
+        ValidAudience = builder.Configuration["Auth:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(builder.Configuration["Auth:Secret"]))
+    };
+});
 builder.Services.AddMvc(options => options.Filters.Add<ModelValidationFilter>());
 builder.Services.AddControllers();
 
