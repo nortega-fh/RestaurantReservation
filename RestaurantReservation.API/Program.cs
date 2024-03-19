@@ -21,6 +21,8 @@ builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 
+builder.Services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
+
 builder.Services.AddMvc(options => options.Filters.Add<ModelValidationFilter>());
 builder.Services.AddControllers();
 
