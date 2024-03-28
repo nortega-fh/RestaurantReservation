@@ -34,7 +34,7 @@ public class AuthController : ControllerBase
         var user = await _userService.GetAsync(loginCredentials.Username, loginCredentials.Password);
         if (user is null)
         {
-            return Unauthorized("Invalid credentials")
+            return Unauthorized("Invalid credentials");
         }
         return Created(Request.Path, _tokenGenerator.GenerateTokenAsync(user));
     }
