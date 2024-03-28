@@ -1,6 +1,5 @@
 using FluentValidation;
 using Microsoft.IdentityModel.Tokens;
-using RestaurantReservation.API.Dtos.Requests;
 using RestaurantReservation.API.Filters;
 using RestaurantReservation.API.Repositories;
 using RestaurantReservation.API.Services;
@@ -19,8 +18,10 @@ builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("Re
 builder.Services.AddSingleton<IRestaurantReservationDatabase, RestaurantReservationDatabase>();
 
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
 

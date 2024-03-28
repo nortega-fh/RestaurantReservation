@@ -3,21 +3,15 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace RestaurantReservation.API.Entities;
 
-public class Customer
+public class Customer : User
 {
-    [BsonId]
-    [BsonRepresentation(BsonType.ObjectId)]
-    public string Id { get; set; }
-
-    [BsonElement("first_name")]
-    public string FirstName { get; set; }
-    
-    [BsonElement("last_name")]
-    public string LastName { get; set; }
-    
     [BsonElement("email")]
-    public string Email { get; set; }
-    
+    public string Email { get; set; } = string.Empty;
+
     [BsonElement("phone_number")]
-    public string PhoneNumber { get; set; }
+    public string PhoneNumber { get; set; } = string.Empty;
+
+    [BsonElement("user_id")]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string UserId { get; set; } = null!;
 }

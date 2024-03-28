@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using RestaurantReservation.API.Dtos.Responses;
+using RestaurantReservation.API.Entities;
 
 namespace RestaurantReservation.API.Services;
 
@@ -13,25 +14,23 @@ public class JwtTokenGenerator : ITokenGenerator
     {
         _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
-    
-    public TokenResponse GenerateToken(string username, string password)
+
+    public TokenResponse GenerateTokenAsync(User user)
     {
         var securityKey = new SymmetricSecurityKey(Convert.FromBase64String(_configuration["Auth:Secret"]));
-        var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.Sha256);
-        var claims = new List<Claim>
-        {
-            new("sub", string.Empty),
-            new("username", string.Empty),
-            new("role", string.Empty),
-        };
+        var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
         var token = new JwtSecurityToken(
             _configuration["Auth:Issuer"],
             _configuration["Auth:Audience"],
-            claims,
+            new List<Claim>
+            {
+                new("sub", user.Id),
+                new("username", user.Username)
+            },
             DateTime.Now,
             DateTime.Now.AddDays(1),
             signingCredentials
         );
-        return new TokenResponse{ Token = new JwtSecurityTokenHandler().WriteToken(token) };
+        return new TokenResponse { Token = new JwtSecurityTokenHandler().WriteToken(token) };
     }
 }

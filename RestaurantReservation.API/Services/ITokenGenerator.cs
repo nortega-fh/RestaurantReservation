@@ -1,8 +1,9 @@
 ﻿using RestaurantReservation.API.Dtos.Responses;
+using RestaurantReservation.API.Entities;
 
 namespace RestaurantReservation.API.Services;
 
 public interface ITokenGenerator
 {
-   TokenResponse GenerateToken(string username, string password);
+    TokenResponse GenerateTokenAsync(User user);
 }
