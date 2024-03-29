@@ -1,10 +1,12 @@
 using FluentValidation;
 using Microsoft.IdentityModel.Tokens;
+using RestaurantReservation.API.AuthHandlers;
 using RestaurantReservation.API.Filters;
-using RestaurantReservation.API.Repositories;
-using RestaurantReservation.API.Services;
-using RestaurantReservation.API.Settings;
 using RestaurantReservation.API.Validators;
+using RestaurantReservation.Domain.Repositories;
+using RestaurantReservation.Domain.Services;
+using RestaurantReservation.Infrastructure;
+using RestaurantReservation.Infrastructure.Repositories;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);

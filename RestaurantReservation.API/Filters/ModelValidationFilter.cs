@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using MongoDB.Driver.Linq;
-using RestaurantReservation.API.Dtos.Responses;
+using RestaurantReservation.API.Contracts.Responses;
 
 namespace RestaurantReservation.API.Filters;
 
@@ -13,7 +12,8 @@ public class ModelValidationFilter : IAsyncActionFilter
         {
             var errors = context.ModelState
                 .Where(modelState => modelState.Value?.Errors.Count > 0)
-                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value?.Errors.Select(error => error.ErrorMessage).ToArray() ?? Array.Empty<string>());
+                .ToDictionary(kvp => kvp.Key,
+                    kvp => kvp.Value?.Errors.Select(error => error.ErrorMessage).ToArray() ?? Array.Empty<string>());
             var errorResponse = new ErrorResponse
             {
                 RequestPath = context.HttpContext.Request.Path,
