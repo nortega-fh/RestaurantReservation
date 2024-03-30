@@ -21,12 +21,13 @@ builder.Services.AddSingleton<IRestaurantReservationDatabase, RestaurantReservat
 
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IRestaurantRepository, RestaurantRepository>();
 
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRestaurantService, RestaurantService>();
 
 builder.Services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
-
 builder.Services.AddAuthentication("Bearer").AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
@@ -39,6 +40,7 @@ builder.Services.AddAuthentication("Bearer").AddJwtBearer(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(builder.Configuration["Auth:Secret"]))
     };
 });
+
 builder.Services.AddMvc(options => options.Filters.Add<ModelValidationFilter>());
 builder.Services.AddControllers();
 
