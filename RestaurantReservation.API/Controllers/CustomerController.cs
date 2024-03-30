@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RestaurantReservation.API.Contracts.Requests;
 using RestaurantReservation.API.Contracts.Responses;
@@ -9,6 +10,7 @@ namespace RestaurantReservation.API.Controllers;
 
 [ApiController]
 [Route("/api/customers")]
+[Authorize]
 public class CustomerController : ControllerBase
 {
     private const int DefaultPageSize = 20;
