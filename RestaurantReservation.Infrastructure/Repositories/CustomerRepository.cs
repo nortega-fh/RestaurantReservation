@@ -35,16 +35,20 @@ public class CustomerRepository : ICustomerRepository
             .FirstAsync());
     }
 
-    public async Task CreateAsync(Domain.Models.Customer customer)
+    public async Task<Domain.Models.Customer?> CreateAsync(Domain.Models.Customer customer)
     {
         var relatedUser = await _userRepository.GetByUsernameAsync(customer.Username);
         if (relatedUser is null)
         {
-            return;
+            return null;
         }
         var customerEntity = _mapper.Map<Customer>(customer);
         customerEntity.UserId = relatedUser.Id;
         await _collection.InsertOneAsync(customerEntity);
+        return _mapper.Map<Domain.Models.Customer>(await _collection
+            .FindAsync(Builders<Customer>.Filter.Eq(cust => cust.Username, customer.Username))
+            .Result
+            .FirstAsync());
     }
 
     public async Task UpdateAsync(string id, Domain.Models.Customer customer)

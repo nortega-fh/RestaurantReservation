@@ -22,9 +22,9 @@ public class CustomerService : ICustomerService
         return await _repository.GetByIdAsync(id);
     }
 
-    public async Task CreateAsync(Customer customer)
+    public async Task<Customer?> CreateAsync(Customer customer)
     {
-        await _repository.CreateAsync(customer);
+        return await _repository.CreateAsync(customer);
     }
 
     public async Task UpdateAsync(string id, Customer customer)

@@ -27,19 +27,19 @@ public class CustomerController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllCustomers(int pageNumber = DefaultPageNumber, int pageSize = DefaultPageSize)
     {
-        var response = new CollectionResponse<Customer>();
-        var items = (await _customerService.GetAllAsync(pageNumber, pageSize)).ToList();
-        response.Metadata = new ResponseMetadata(items.Count, pageSize, pageNumber);
-        response.Items = items;
-        return Ok(response);
+        var items = _mapper.Map<List<CustomerResponse>>(await _customerService.GetAllAsync(pageNumber, pageSize));
+        return Ok(new CollectionResponse<CustomerResponse>
+        {
+            Metadata = new ResponseMetadata(items.Count, pageSize, pageNumber),
+            Items = items
+        });
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateCustomer(CustomerCreate createdCustomer)
     {
-        var customer = _mapper.Map<Customer>(createdCustomer);
-        await _customerService.CreateAsync(customer);
-        return Created(Request.Path, customer);
+        var customer = await _customerService.CreateAsync(_mapper.Map<Customer>(createdCustomer));
+        return Created(Request.Path, _mapper.Map<CustomerResponse>(customer));
     }
 
     [HttpDelete("{customerId}")]
