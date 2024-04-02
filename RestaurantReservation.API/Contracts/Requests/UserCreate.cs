@@ -1,9 +1,3 @@
 ﻿namespace RestaurantReservation.API.Contracts.Requests;
 
-public class UserCreate
-{
-    public string Username { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
-    public string FirstName { get; set; } = string.Empty;
-    public string LastName { get; set; } = string.Empty;
-}
+public record UserCreate(string Username, string Password, string FirstName, string LastName);
