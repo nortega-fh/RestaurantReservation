@@ -13,7 +13,7 @@ public class UserService : IUserService
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
-    public async Task<User?> GetAsync(string username, string password)
+    public async Task<User?> GetByCredentialsAsync(string username, string password)
     {
         var user = await _repository.GetByUsernameAsync(username);
         if (user is null)
@@ -22,6 +22,11 @@ public class UserService : IUserService
         }
         var passwordMatchResult = new PasswordHasher<User>().VerifyHashedPassword(user, user.Password, password);
         return passwordMatchResult is PasswordVerificationResult.Success ? user : null;
+    }
+
+    public async Task<User?> GetByUsernameAsync(string username)
+    {
+        return await _repository.GetByUsernameAsync(username);
     }
 
     public async Task<User> CreateAsync(User user)
@@ -37,5 +42,10 @@ public class UserService : IUserService
     public async Task DeleteAsync(string id)
     {
         await _repository.DeleteAsync(id);
+    }
+
+    public async Task<bool> UserExistsAsync(string username)
+    {
+        return await _repository.GetByUsernameAsync(username) is not null;
     }
 }

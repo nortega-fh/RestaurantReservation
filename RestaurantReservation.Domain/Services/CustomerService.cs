@@ -6,10 +6,12 @@ namespace RestaurantReservation.Domain.Services;
 public class CustomerService : ICustomerService
 {
     private readonly ICustomerRepository _repository;
+    private readonly IUserService _userService;
 
-    public CustomerService(ICustomerRepository repository)
+    public CustomerService(ICustomerRepository repository, IUserService userService)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _userService = userService ?? throw new ArgumentNullException(nameof(userService));
     }
 
     public async Task<IEnumerable<Customer>> GetAllAsync(int pageNumber, int pageSize)
@@ -35,5 +37,15 @@ public class CustomerService : ICustomerService
     public async Task DeleteAsync(string id)
     {
         await _repository.DeleteAsync(id);
+    }
+
+    public async Task<bool> CustomerExistsWithIdAsync(string id)
+    {
+        return await GetByIdAsync(id) is not null;
+    }
+
+    public async Task<bool> UserExistsWithUsernameAsync(string username)
+    {
+        return await _userService.UserExistsAsync(username);
     }
 }

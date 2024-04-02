@@ -9,4 +9,6 @@ public interface ICustomerService
     Task<Customer?> CreateAsync(Customer customer);
     Task UpdateAsync(string id, Customer customer);
     Task DeleteAsync(string id);
+    Task<bool> CustomerExistsWithIdAsync(string id);
+    Task<bool> UserExistsWithUsernameAsync(string username);
 }

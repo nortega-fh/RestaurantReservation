@@ -32,7 +32,7 @@ public class CustomerRepository : ICustomerRepository
     {
         return _mapper.Map<Domain.Models.Customer>(await _collection.AsQueryable()
             .Where(customer => customer.Id.Equals(id))
-            .FirstAsync());
+            .FirstOrDefaultAsync());
     }
 
     public async Task<Domain.Models.Customer?> CreateAsync(Domain.Models.Customer customer)
@@ -43,6 +43,7 @@ public class CustomerRepository : ICustomerRepository
             return null;
         }
         var customerEntity = _mapper.Map<Customer>(customer);
+        _mapper.Map(relatedUser, customerEntity);
         customerEntity.UserId = relatedUser.Id;
         await _collection.InsertOneAsync(customerEntity);
         return _mapper.Map<Domain.Models.Customer>(await _collection

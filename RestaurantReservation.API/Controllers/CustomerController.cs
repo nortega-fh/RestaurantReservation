@@ -35,16 +35,44 @@ public class CustomerController : ControllerBase
         });
     }
 
+    [HttpGet("{customerId}")]
+    public async Task<IActionResult> GetCustomerById(string customerId)
+    {
+        var customer = await _customerService.GetByIdAsync(customerId);
+        return customer is null ? NotFound() : Ok(_mapper.Map<CustomerResponse>(customer));
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreateCustomer(CustomerCreate createdCustomer)
     {
+        if (!await _customerService.UserExistsWithUsernameAsync(createdCustomer.Username))
+        {
+            return NotFound($"Username {createdCustomer.Username} doesn't exist");
+        }
         var customer = await _customerService.CreateAsync(_mapper.Map<Customer>(createdCustomer));
         return Created(Request.Path, _mapper.Map<CustomerResponse>(customer));
+    }
+
+    [HttpPut("{customerId}")]
+    public async Task<IActionResult> UpdateCustomer(string customerId, CustomerUpdate updatedCustomer)
+    {
+        var customer = await _customerService.GetByIdAsync(customerId);
+        if (customer is null)
+        {
+            return NotFound();
+        }
+        _mapper.Map(updatedCustomer, customer);
+        await _customerService.UpdateAsync(customerId, customer);
+        return NoContent();
     }
 
     [HttpDelete("{customerId}")]
     public async Task<IActionResult> DeleteCustomer(string customerId)
     {
+        if (!await _customerService.CustomerExistsWithIdAsync(customerId))
+        {
+            return NotFound();
+        }
         await _customerService.DeleteAsync(customerId);
         return NoContent();
     }

@@ -32,7 +32,7 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login(UserLogin loginCredentials)
     {
-        var user = await _userService.GetAsync(loginCredentials.Username, loginCredentials.Password);
+        var user = await _userService.GetByCredentialsAsync(loginCredentials.Username, loginCredentials.Password);
         if (user is null)
         {
             return Unauthorized("Invalid credentials");
