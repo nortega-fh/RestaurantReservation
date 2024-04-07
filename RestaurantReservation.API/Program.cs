@@ -1,4 +1,5 @@
 using FluentValidation;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.IdentityModel.Tokens;
 using RestaurantReservation.API.AuthHandlers;
 using RestaurantReservation.API.Filters;
@@ -11,20 +12,26 @@ using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// AutoMapper configuration
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+// FluentValidation Configuration
 builder.Services.AddValidatorsFromAssemblyContaining<CustomerValidator>();
 builder.Services.AddFluentValidationAutoValidation();
 
+// DB Configuration
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("RestaurantReservationDb"));
 builder.Services.AddSingleton<IRestaurantReservationDatabase, RestaurantReservationDatabase>();
 
+// Repositories
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
+// Services
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
+// JWT Auth
 builder.Services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
 
 builder.Services.AddAuthentication("Bearer").AddJwtBearer(options =>
@@ -39,12 +46,20 @@ builder.Services.AddAuthentication("Bearer").AddJwtBearer(options =>
         IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(builder.Configuration["Auth:Secret"]))
     };
 });
+
+// Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddSingleton<FileExtensionContentTypeProvider>();
+
 builder.Services.AddMvc(options => options.Filters.Add<ModelValidationFilter>());
 builder.Services.AddControllers();
 
 var app = builder.Build();
 
 app.MapControllers();
+app.UseSwagger();
+app.UseSwaggerUI();
 app.MapGet("/", () => "Hello World!");
 
 app.Run();
