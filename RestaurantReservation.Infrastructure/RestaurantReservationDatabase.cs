@@ -15,20 +15,21 @@ public class RestaurantReservationDatabase : IRestaurantReservationDatabase
 
     public RestaurantReservationDatabase(IOptions<MongoDbParameters> dbSettings)
     {
+        var objectSerializer = new ObjectSerializer(type => ObjectSerializer.AllAllowedTypes(type));
+        BsonSerializer.RegisterSerializer(objectSerializer);
+
+        BsonSerializer.RegisterIdGenerator(typeof(string), StringObjectIdGenerator.Instance);
+
+        var camelCaseConvention = new ConventionPack { new CamelCaseElementNameConvention() };
+        ConventionRegistry.Register("CamelCase", camelCaseConvention, _ => true);
+
+        BsonClassMap.RegisterClassMap<ScheduleBlock>();
         BsonClassMap.RegisterClassMap<RestaurantSchedule>(classMap =>
         {
             classMap.AutoMap();
             classMap.MapMember(restaurantSchedule => restaurantSchedule.WeeklySchedule)
                 .SetSerializer(new WeeklyScheduleSerializer());
         });
-
-        var objectSerializer = new ObjectSerializer(type => ObjectSerializer.AllAllowedTypes(type));
-        BsonSerializer.RegisterSerializer(objectSerializer);
-
-        var camelCaseConvention = new ConventionPack { new CamelCaseElementNameConvention() };
-        ConventionRegistry.Register("CamelCase", camelCaseConvention, _ => true);
-
-        BsonSerializer.RegisterIdGenerator(typeof(string), StringObjectIdGenerator.Instance);
 
         var client = new MongoClient(dbSettings.Value.ConnectionString);
         _database = client.GetDatabase(dbSettings.Value.DbName);

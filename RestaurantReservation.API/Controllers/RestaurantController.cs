@@ -26,7 +26,7 @@ public class RestaurantController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll(int pageSize = DefaultPageSize, int pageNumber = DefaultPageNumber)
     {
-        var items = _mapper.Map<List<Restaurant>>(await _service.GetAllAsync(pageNumber, pageSize));
+        var items = _mapper.Map<List<Restaurant>>(await _service.GetAllAsync(pageSize, pageNumber));
         return Ok(new CollectionResponse<Restaurant>
         {
             Metadata = new ResponseMetadata(items.Count, pageSize, pageNumber),
