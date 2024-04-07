@@ -26,7 +26,12 @@ public class RestaurantController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll(int pageSize = DefaultPageSize, int pageNumber = DefaultPageNumber)
     {
-        return Ok(await _service.GetAllAsync(pageSize, pageNumber));
+        var items = _mapper.Map<List<Restaurant>>(await _service.GetAllAsync(pageNumber, pageSize));
+        return Ok(new CollectionResponse<Restaurant>
+        {
+            Metadata = new ResponseMetadata(items.Count, pageSize, pageNumber),
+            Items = items
+        });
     }
 
     [HttpGet("{id}")]
@@ -52,7 +57,7 @@ public class RestaurantController : ControllerBase
         }
         var restaurant = _mapper.Map<Restaurant>(restaurantUpdate);
         restaurant.Id = id;
-        await _service.UpdateAsync(id, restaurant);
+        await _service.UpdateAsync(restaurant);
         return NoContent();
     }
 

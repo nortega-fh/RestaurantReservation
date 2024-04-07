@@ -12,11 +12,6 @@ public class UserRepository : IUserRepository
         _collection = database.GetDatabase().GetCollection<User>("Users");
     }
 
-    public async Task DeleteAsync(string id)
-    {
-        await _collection.DeleteOneAsync(Builders<User>.Filter.Eq(user => user.Id, id));
-    }
-
     public async Task<User> CreateUserAsync(User user)
     {
         await _collection.InsertOneAsync(user);
@@ -31,11 +26,5 @@ public class UserRepository : IUserRepository
         return await _collection
             .FindAsync(Builders<User>.Filter.Eq(user => user.Username, username)).Result
             .FirstOrDefaultAsync();
-    }
-
-    public async Task UpdateAsync(string id, User user)
-    {
-        var findById = Builders<User>.Filter.Eq(u => u.Id, id);
-        await _collection.ReplaceOneAsync(findById, user);
     }
 }

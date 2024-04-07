@@ -77,7 +77,10 @@ public class TableController : ControllerBase
         {
             return NotFound();
         }
-        await _tableService.UpdateAsync(tableId, _mapper.Map<Table>(updatedTable));
+        var table = _mapper.Map<Table>(updatedTable);
+        table.Id = tableId;
+        table.RestaurantId = restaurantId;
+        await _tableService.UpdateAsync(table);
         return NoContent();
     }
 

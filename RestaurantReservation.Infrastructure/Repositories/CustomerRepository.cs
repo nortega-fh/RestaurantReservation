@@ -49,9 +49,9 @@ public class CustomerRepository : ICustomerRepository
             .FirstAsync();
     }
 
-    public async Task UpdateAsync(string id, Customer customer)
+    public async Task UpdateAsync(Customer customer)
     {
-        var filter = Builders<Customer>.Filter.Eq(c => c.Id, id);
+        var filter = Builders<Customer>.Filter.Eq(c => c.Id, customer.Id);
         await _collection.FindOneAndReplaceAsync(filter, customer);
     }
 

@@ -24,9 +24,9 @@ public class RestaurantService : IRestaurantService
         await _repository.CreateAsync(restaurant);
     }
 
-    public async Task UpdateAsync(string id, Restaurant restaurant)
+    public async Task UpdateAsync(Restaurant restaurant)
     {
-        await _repository.UpdateAsync(id, restaurant);
+        await _repository.UpdateAsync(restaurant);
     }
 
     public async Task DeleteAsync(string id)

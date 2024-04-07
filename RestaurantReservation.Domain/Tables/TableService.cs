@@ -24,9 +24,9 @@ public class TableService : ITableService
         await _repository.CreateAsync(table);
     }
 
-    public async Task UpdateAsync(string tableId, Table table)
+    public async Task UpdateAsync(Table table)
     {
-        await _repository.UpdateAsync(tableId, table);
+        await _repository.UpdateAsync(table);
     }
 
     public async Task DeleteAsync(string tableId)

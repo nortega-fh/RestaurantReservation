@@ -28,9 +28,9 @@ public class CustomerService : ICustomerService
         return await _repository.CreateAsync(customer);
     }
 
-    public async Task UpdateAsync(string id, Customer customer)
+    public async Task UpdateAsync(Customer customer)
     {
-        await _repository.UpdateAsync(id, customer);
+        await _repository.UpdateAsync(customer);
     }
 
     public async Task DeleteAsync(string id)

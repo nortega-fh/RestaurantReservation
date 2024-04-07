@@ -1,7 +1,6 @@
 ﻿using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using RestaurantReservation.Domain.Tables;
-using Table = RestaurantReservation.Domain.Tables.Table;
 
 namespace RestaurantReservation.Infrastructure.Repositories;
 
@@ -37,9 +36,9 @@ public class TableRepository : ITableRepository
         await _collection.InsertOneAsync(table);
     }
 
-    public async Task UpdateAsync(string tableId, Table table)
+    public async Task UpdateAsync(Table table)
     {
-        var filter = Builders<Table>.Filter.Eq(t => t.Id, tableId);
+        var filter = Builders<Table>.Filter.Eq(t => t.Id, table.Id);
         await _collection.FindOneAndReplaceAsync(filter, table);
     }
 

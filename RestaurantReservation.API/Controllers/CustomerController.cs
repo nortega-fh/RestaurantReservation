@@ -61,7 +61,7 @@ public class CustomerController : ControllerBase
             return NotFound();
         }
         _mapper.Map(updatedCustomer, customer);
-        await _customerService.UpdateAsync(customerId, customer);
+        await _customerService.UpdateAsync(customer);
         return NoContent();
     }
 

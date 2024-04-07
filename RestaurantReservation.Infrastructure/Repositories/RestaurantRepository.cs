@@ -36,9 +36,9 @@ public class RestaurantRepository : IRestaurantRepository
         await _collection.InsertOneAsync(restaurant);
     }
 
-    public async Task UpdateAsync(string id, Restaurant restaurant)
+    public async Task UpdateAsync(Restaurant restaurant)
     {
-        var filter = Builders<Restaurant>.Filter.Eq(r => r.Id, id);
+        var filter = Builders<Restaurant>.Filter.Eq(r => r.Id, restaurant.Id);
         await _collection.FindOneAndReplaceAsync(filter, restaurant);
     }
 

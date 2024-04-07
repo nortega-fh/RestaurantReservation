@@ -22,25 +22,10 @@ public class UserService : IUserService
         return passwordMatchResult is PasswordVerificationResult.Success ? user : null;
     }
 
-    public async Task<User?> GetByUsernameAsync(string username)
-    {
-        return await _repository.GetByUsernameAsync(username);
-    }
-
     public async Task<User> CreateAsync(User user)
     {
         user.Password = new PasswordHasher<User>().HashPassword(user, user.Password);
         return await _repository.CreateUserAsync(user);
-    }
-
-    public async Task UpdateAsync(string id, User user)
-    {
-        await _repository.UpdateAsync(id, user);
-    }
-
-    public async Task DeleteAsync(string id)
-    {
-        await _repository.DeleteAsync(id);
     }
 
     public async Task<bool> UserExistsAsync(string username)
