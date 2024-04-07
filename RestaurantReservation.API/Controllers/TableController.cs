@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RestaurantReservation.API.Contracts.Requests;
 using RestaurantReservation.API.Contracts.Responses;
-using RestaurantReservation.Domain.Models;
-using RestaurantReservation.Domain.Services;
+using RestaurantReservation.Domain.Restaurants;
+using RestaurantReservation.Domain.Tables;
 
 namespace RestaurantReservation.API.Controllers;
 
@@ -60,7 +60,9 @@ public class TableController : ControllerBase
         {
             return NotFound();
         }
-        await _tableService.CreateAsync(restaurantId, _mapper.Map<Table>(requestedTable));
+        var table = _mapper.Map<Table>(requestedTable);
+        table.RestaurantId = restaurantId;
+        await _tableService.CreateAsync(table);
         return Created(Request.Path, null);
     }
 

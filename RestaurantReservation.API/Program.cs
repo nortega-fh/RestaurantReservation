@@ -3,8 +3,10 @@ using Microsoft.IdentityModel.Tokens;
 using RestaurantReservation.API.AuthHandlers;
 using RestaurantReservation.API.Filters;
 using RestaurantReservation.API.Validators;
-using RestaurantReservation.Domain.Repositories;
-using RestaurantReservation.Domain.Services;
+using RestaurantReservation.Domain.Customers;
+using RestaurantReservation.Domain.Restaurants;
+using RestaurantReservation.Domain.Tables;
+using RestaurantReservation.Domain.Users;
 using RestaurantReservation.Infrastructure;
 using RestaurantReservation.Infrastructure.Repositories;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
@@ -16,7 +18,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddValidatorsFromAssemblyContaining<CustomerValidator>();
 builder.Services.AddFluentValidationAutoValidation();
 
-builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("RestaurantReservationDb"));
+builder.Services.Configure<MongoDbParameters>(builder.Configuration.GetSection("RestaurantReservationDb"));
 builder.Services.AddSingleton<IRestaurantReservationDatabase, RestaurantReservationDatabase>();
 
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();

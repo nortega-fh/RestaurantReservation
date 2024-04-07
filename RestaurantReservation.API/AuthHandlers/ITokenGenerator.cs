@@ -1,5 +1,5 @@
 ﻿using RestaurantReservation.API.Contracts.Responses;
-using RestaurantReservation.Domain.Models;
+using RestaurantReservation.Domain.Users;
 
 namespace RestaurantReservation.API.AuthHandlers;
 

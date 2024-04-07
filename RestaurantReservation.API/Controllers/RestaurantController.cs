@@ -3,8 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RestaurantReservation.API.Contracts.Requests;
 using RestaurantReservation.API.Contracts.Responses;
-using RestaurantReservation.Domain.Models;
-using RestaurantReservation.Domain.Services;
+using RestaurantReservation.Domain.Restaurants;
 
 namespace RestaurantReservation.API.Controllers;
 
@@ -40,7 +39,8 @@ public class RestaurantController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create(RestaurantCreate restaurantCreate)
     {
-        return Created(Request.Path, await _service.CreateAsync(_mapper.Map<Restaurant>(restaurantCreate)));
+        await _service.CreateAsync(_mapper.Map<Restaurant>(restaurantCreate));
+        return Created(Request.Path, null);
     }
 
     [HttpPut("{id}")]
@@ -50,7 +50,9 @@ public class RestaurantController : ControllerBase
         {
             return NotFound();
         }
-        await _service.UpdateAsync(id, _mapper.Map<Restaurant>(restaurantUpdate));
+        var restaurant = _mapper.Map<Restaurant>(restaurantUpdate);
+        restaurant.Id = id;
+        await _service.UpdateAsync(id, restaurant);
         return NoContent();
     }
 

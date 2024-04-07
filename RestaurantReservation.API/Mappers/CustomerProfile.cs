@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using RestaurantReservation.API.Contracts.Requests;
 using RestaurantReservation.API.Contracts.Responses;
-using RestaurantReservation.Domain.Models;
+using RestaurantReservation.Domain.Customers;
+using RestaurantReservation.Domain.Users;
 
 namespace RestaurantReservation.API.Mappers;
 

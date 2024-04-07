@@ -3,8 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RestaurantReservation.API.Contracts.Requests;
 using RestaurantReservation.API.Contracts.Responses;
-using RestaurantReservation.Domain.Models;
-using RestaurantReservation.Domain.Services;
+using RestaurantReservation.Domain.Customers;
 
 namespace RestaurantReservation.API.Controllers;
 
