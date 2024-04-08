@@ -1,6 +1,6 @@
-﻿namespace RestaurantReservation.Domain.MenuItems;
+﻿namespace RestaurantReservation.API.Contracts.Responses;
 
-public class MenuItem
+public class MenuItemResponse
 {
     public string Id { get; set; } = string.Empty;
 
@@ -9,6 +9,4 @@ public class MenuItem
     public string Description { get; set; } = string.Empty;
 
     public decimal Price { get; set; }
-
-    public string RestaurantId { get; set; } = string.Empty;
 }
