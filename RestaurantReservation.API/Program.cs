@@ -7,6 +7,7 @@ using RestaurantReservation.API.Validators;
 using RestaurantReservation.Domain.Customers;
 using RestaurantReservation.Domain.Employees;
 using RestaurantReservation.Domain.MenuItems;
+using RestaurantReservation.Domain.Reservations;
 using RestaurantReservation.Domain.Restaurants;
 using RestaurantReservation.Domain.Tables;
 using RestaurantReservation.Domain.Users;
@@ -34,6 +35,7 @@ builder.Services.AddScoped<IRestaurantRepository, RestaurantRepository>();
 builder.Services.AddScoped<ITableRepository, TableRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IMenuItemRepository, MenuItemRepository>();
+builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
 
 // Services
 builder.Services.AddScoped<ICustomerService, CustomerService>();
@@ -42,6 +44,10 @@ builder.Services.AddScoped<IRestaurantService, RestaurantService>();
 builder.Services.AddScoped<ITableService, TableService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IMenuItemService, MenuItemService>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
+
+// Components
+builder.Services.AddScoped<IReservationAvailabilityChecker, ReservationAvailabilityChecker>();
 
 // JWT Auth
 builder.Services.AddScoped<ITokenGenerator, JwtTokenGenerator>();

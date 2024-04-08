@@ -1,15 +1,9 @@
-﻿namespace RestaurantReservation.Domain.Reservations;
+﻿namespace RestaurantReservation.API.Contracts.Responses;
 
-public class Reservation
+public class ReservationResponse
 {
     public string Id { get; set; } = string.Empty;
-
     public DateTime StartDate { get; set; }
-
     public DateTime EndDate { get; set; }
-
-    public int PartySize { get; set; }
-
-    public string RestaurantId { get; set; } = string.Empty;
     public string TableId { get; set; } = string.Empty;
 }

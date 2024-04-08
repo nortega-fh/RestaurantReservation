@@ -8,4 +8,5 @@ public interface IRestaurantService
     Task UpdateAsync(Restaurant restaurant);
     Task DeleteAsync(string id);
     Task<bool> RestaurantExistsWithIdAsync(string id);
+    Task<bool> IsRestaurantAvailableOnDateAsync(string restaurantId, DateTime date);
 }
