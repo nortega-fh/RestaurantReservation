@@ -5,6 +5,7 @@ using RestaurantReservation.API.AuthHandlers;
 using RestaurantReservation.API.Filters;
 using RestaurantReservation.API.Validators;
 using RestaurantReservation.Domain.Customers;
+using RestaurantReservation.Domain.Employees;
 using RestaurantReservation.Domain.Restaurants;
 using RestaurantReservation.Domain.Tables;
 using RestaurantReservation.Domain.Users;
@@ -30,12 +31,14 @@ builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRestaurantRepository, RestaurantRepository>();
 builder.Services.AddScoped<ITableRepository, TableRepository>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
 // Services
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRestaurantService, RestaurantService>();
 builder.Services.AddScoped<ITableService, TableService>();
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
 // JWT Auth
 builder.Services.AddScoped<ITokenGenerator, JwtTokenGenerator>();
