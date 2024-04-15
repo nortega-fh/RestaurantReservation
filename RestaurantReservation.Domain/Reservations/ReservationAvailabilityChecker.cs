@@ -20,17 +20,33 @@ public class ReservationAvailabilityChecker : IReservationAvailabilityChecker
 
     public async Task<bool> AreReservationDatesAvailable(Reservation reservation)
     {
-        if ((await _reservationRepository.GetByRestaurantAndBetweenDates(reservation.RestaurantId,
-                reservation.StartDate, reservation.EndDate)).Count > 0)
+        var overlappedReservations =
+            (await _reservationRepository.GetByTableAndBetweenDates(reservation.TableId, reservation.StartDate,
+                reservation.EndDate)).Where(r => !r.Id.Equals(reservation.Id)).ToList();
+        if (overlappedReservations.Count > 0)
         {
-            throw new BadHttpRequestException("There are other reservations in the dates requested.");
+            throw new BadHttpRequestException("The requested table is not available in these dates.");
         }
-        if (!await _restaurantService.IsRestaurantAvailableOnDateAsync(reservation.RestaurantId,
-                reservation.StartDate))
+        var isClosedAtReservationStart =
+            !await _restaurantService.IsRestaurantAvailableOnDateAsync(reservation.RestaurantId, reservation.StartDate);
+        var isClosedAtReservationEnd =
+            !await _restaurantService.IsRestaurantAvailableOnDateAsync(reservation.RestaurantId, reservation.EndDate);
+        var closedDate = new DateTime();
+        if (isClosedAtReservationStart)
         {
-            throw new BadHttpRequestException($"The restaurant is not open at date {reservation.StartDate}");
+            closedDate = reservation.StartDate;
         }
-        if (((await _tableService.GetByIdAsync(reservation.TableId))?.Capacity ?? -1) < reservation.PartySize)
+        else if (isClosedAtReservationEnd)
+        {
+            closedDate = reservation.EndDate;
+        }
+        if (isClosedAtReservationStart || isClosedAtReservationEnd)
+        {
+            throw new BadHttpRequestException($"The restaurant is not open at date {closedDate}");
+        }
+        var tableCapacityIsLessThanPartySize =
+            ((await _tableService.GetByIdAsync(reservation.TableId))?.Capacity ?? -1) < reservation.PartySize;
+        if (tableCapacityIsLessThanPartySize)
         {
             throw new BadHttpRequestException("The table doesn't have the capacity for the party size");
         }

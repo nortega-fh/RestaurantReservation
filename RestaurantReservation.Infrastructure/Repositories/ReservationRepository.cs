@@ -27,14 +27,14 @@ public class ReservationRepository : IReservationRepository
             pageSize, pageNumber);
     }
 
-    public async Task<List<Reservation>> GetByRestaurantAndBetweenDates(string restaurantId, DateTime startDate,
+    public async Task<List<Reservation>> GetByTableAndBetweenDates(string tableId, DateTime startDate,
         DateTime endDate)
     {
         return await _collection.AsQueryable()
-            .Where(reservation => reservation.RestaurantId.Equals(restaurantId) &&
+            .Where(reservation => reservation.TableId.Equals(tableId) &&
                                   ((reservation.StartDate >= startDate &&
-                                    reservation.StartDate <= endDate) ||
-                                   (reservation.EndDate >= startDate &&
+                                    reservation.StartDate < endDate) ||
+                                   (reservation.EndDate > startDate &&
                                     reservation.EndDate <= endDate)))
             .ToListAsync();
     }

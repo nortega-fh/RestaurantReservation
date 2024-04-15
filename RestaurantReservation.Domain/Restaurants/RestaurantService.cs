@@ -41,16 +41,33 @@ public class RestaurantService : IRestaurantService
 
     public async Task<bool> IsRestaurantAvailableOnDateAsync(string restaurantId, DateTime date)
     {
-        var dayOfWeek = date.DayOfWeek;
-        var hours = date.Hour;
-        var minutes = date.Minute;
+        var dateDayOfWeek = date.DayOfWeek;
         var restaurant = await GetByIdAsync(restaurantId);
         var isExceptionallyOpenOnDate = restaurant?.Schedule.ExceptionalOpenDays?.Contains(date) ?? false;
         var restaurantWeeklySchedule = restaurant?.Schedule.WeeklySchedule;
-        var isDateAmongWorkingHours = (restaurantWeeklySchedule?.ContainsKey(dayOfWeek) ?? false)
-                                      && restaurantWeeklySchedule[dayOfWeek].Find(scheduleBlock =>
-                                          scheduleBlock.Start[0] >= hours && scheduleBlock.Start[1] >= minutes &&
-                                          scheduleBlock.End[0] <= hours && scheduleBlock.End[1] <= minutes) is not null;
+        var isDateAmongWorkingHours = (restaurantWeeklySchedule?.ContainsKey(dateDayOfWeek) ?? false)
+                                      && restaurantWeeklySchedule[dateDayOfWeek].Find(scheduleBlock =>
+                                          IsDateAmongScheduleBlock(scheduleBlock, date)) is not null;
         return isExceptionallyOpenOnDate || isDateAmongWorkingHours;
+    }
+
+    private static bool IsDateAmongScheduleBlock(ScheduleBlock scheduleBlock, DateTime date)
+    {
+        var monthToString = ParseIntToValidDateString(date.Month);
+        var dayToString = ParseIntToValidDateString(date.Day);
+        var dateString = $"{date.Year}-{monthToString}-{dayToString}";
+        var scheduleStartHourToString = ParseIntToValidDateString(scheduleBlock.Start[0]);
+        var scheduleStartMinuteToString = ParseIntToValidDateString(scheduleBlock.Start[1]);
+        var scheduleEndHourToString = ParseIntToValidDateString(scheduleBlock.End[0]);
+        var scheduleEndMinuteToString = ParseIntToValidDateString(scheduleBlock.End[1]);
+        var scheduleStartDate =
+            DateTime.Parse($"{dateString}T{scheduleStartHourToString}:{scheduleStartMinuteToString}:00Z");
+        var scheduleEndDate = DateTime.Parse($"{dateString}T{scheduleEndHourToString}:{scheduleEndMinuteToString}:00Z");
+        return date >= scheduleStartDate && date <= scheduleEndDate;
+    }
+
+    private static string ParseIntToValidDateString(int value)
+    {
+        return value < 10 ? "0" + value : value.ToString();
     }
 }
