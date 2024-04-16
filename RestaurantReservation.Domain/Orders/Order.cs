@@ -1,6 +1,4 @@
-﻿using RestaurantReservation.Domain.MenuItems;
-
-namespace RestaurantReservation.Domain.Orders;
+﻿namespace RestaurantReservation.Domain.Orders;
 
 public class Order
 {
@@ -14,5 +12,5 @@ public class Order
 
     public decimal TotalAmount { get; set; }
 
-    public IEnumerable<MenuItem> Items { get; set; } = new List<MenuItem>();
+    public IEnumerable<OrderMenuItem> Items { get; set; } = new List<OrderMenuItem>();
 }

@@ -48,4 +48,29 @@ public class OrderService : IOrderService
     {
         return await _orderRepository.GetByIdAndReservationId(orderId, reservationId) is not null;
     }
+
+    public async Task AddOrderMenuItemAsync(Order order, OrderMenuItem orderMenuItem)
+    {
+        order.Items = order.Items.Append(orderMenuItem);
+        order.TotalAmount =
+            order.Items.Aggregate(0m, (total, menuItem) => total + menuItem.Quantity * menuItem.Item.Price);
+        await Update(order.Id, order);
+    }
+
+    public async Task UpdateOrderMenuItemAsync(Order order, OrderMenuItem orderMenuItem)
+    {
+        order.Items = order.Items.Where(menuItem => !orderMenuItem.Item.Id.Equals(menuItem.Item.Id));
+        order.Items = order.Items.Append(orderMenuItem);
+        order.TotalAmount =
+            order.Items.Aggregate(0m, (total, menuItem) => total + menuItem.Quantity * menuItem.Item.Price);
+        await Update(order.Id, order);
+    }
+
+    public async Task DeleteOrderMenuItemAsync(Order order, string menuItemId)
+    {
+        order.Items = order.Items.Where(menuItem => !menuItemId.Equals(menuItem.Item.Id));
+        order.TotalAmount =
+            order.Items.Aggregate(0m, (total, menuItem) => total + menuItem.Quantity * menuItem.Item.Price);
+        await Update(order.Id, order);
+    }
 }

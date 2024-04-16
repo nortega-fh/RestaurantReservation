@@ -10,4 +10,7 @@ public interface IOrderService
     Task Update(string orderId, Order order);
     Task Delete(string orderId);
     Task<bool> OrderExistsWithReservation(string reservationId, string orderId);
+    Task AddOrderMenuItemAsync(Order order, OrderMenuItem orderMenuItem);
+    Task UpdateOrderMenuItemAsync(Order order, OrderMenuItem orderMenuItem);
+    Task DeleteOrderMenuItemAsync(Order order, string menuItemId);
 }

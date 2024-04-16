@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RestaurantReservation.API.Contracts.Requests;
-using RestaurantReservation.API.Contracts.Responses;
+using RestaurantReservation.API.Contracts.Requests.MenuItems;
+using RestaurantReservation.API.Contracts.Responses.API;
+using RestaurantReservation.API.Contracts.Responses.MenuItems;
 using RestaurantReservation.Domain.MenuItems;
 using RestaurantReservation.Domain.Restaurants;
 

@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RestaurantReservation.API.Contracts.Requests;
-using RestaurantReservation.API.Contracts.Responses;
+using RestaurantReservation.API.Contracts.Requests.Orders;
+using RestaurantReservation.API.Contracts.Responses.API;
+using RestaurantReservation.API.Contracts.Responses.Orders;
+using RestaurantReservation.Domain.Employees;
 using RestaurantReservation.Domain.Orders;
 using RestaurantReservation.Domain.Reservations;
 using RestaurantReservation.Domain.Restaurants;
@@ -14,23 +16,29 @@ namespace RestaurantReservation.API.Controllers;
 [Route("/api/restaurants/{restaurantId}/reservations/{reservationId}/orders")]
 public class RestaurantReservationOrderController : ControllerBase
 {
+    private const int DefaultPageSize = 20;
+    private const int DefaultPageNumber = 1;
+    private readonly IEmployeeService _employeeService;
     private readonly IMapper _mapper;
     private readonly IOrderService _orderService;
     private readonly IReservationService _reservationService;
     private readonly IRestaurantService _restaurantService;
 
     public RestaurantReservationOrderController(IRestaurantService restaurantService,
-        IReservationService reservationService, IOrderService orderService, IMapper mapper)
+        IReservationService reservationService, IOrderService orderService, IEmployeeService employeeService,
+        IMapper mapper)
     {
         _restaurantService = restaurantService ?? throw new ArgumentNullException(nameof(restaurantService));
         _reservationService = reservationService ?? throw new ArgumentNullException(nameof(reservationService));
         _orderService = orderService ?? throw new ArgumentNullException(nameof(orderService));
+        _employeeService = employeeService ?? throw new ArgumentNullException(nameof(employeeService));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAllOrdersByReservation([FromRoute] string restaurantId,
-        [FromRoute] string reservationId, [FromQuery] int pageSize, [FromQuery] int pageNumber)
+        [FromRoute] string reservationId, [FromQuery] int pageSize = DefaultPageSize,
+        [FromQuery] int pageNumber = DefaultPageNumber)
     {
         if (!await _restaurantService.RestaurantExistsWithIdAsync(restaurantId) ||
             !await _reservationService.ReservationsExistsWithRestaurant(restaurantId, reservationId))
@@ -84,6 +92,10 @@ public class RestaurantReservationOrderController : ControllerBase
             !await _reservationService.ReservationsExistsWithRestaurant(restaurantId, reservationId))
         {
             return NotFound();
+        }
+        if (!await _employeeService.ExistsWithIdAsync(orderReservationCreate.EmployeeId))
+        {
+            return BadRequest($"Employee with id {orderReservationCreate.EmployeeId} doesn't exist");
         }
         var order = await _orderService.GetByIdAndReservationId(orderId, reservationId);
         if (order is null)

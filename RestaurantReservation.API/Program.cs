@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.IdentityModel.Tokens;
 using RestaurantReservation.API.AuthHandlers;
 using RestaurantReservation.API.Filters;
-using RestaurantReservation.API.Validators;
+using RestaurantReservation.API.Validators.Customers;
 using RestaurantReservation.Domain.Customers;
 using RestaurantReservation.Domain.Employees;
 using RestaurantReservation.Domain.MenuItems;

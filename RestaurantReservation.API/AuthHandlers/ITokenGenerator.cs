@@ -1,4 +1,4 @@
-﻿using RestaurantReservation.API.Contracts.Responses;
+﻿using RestaurantReservation.API.Contracts.Responses.API;
 using RestaurantReservation.Domain.Users;
 
 namespace RestaurantReservation.API.AuthHandlers;
