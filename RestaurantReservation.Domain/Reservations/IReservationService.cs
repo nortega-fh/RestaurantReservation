@@ -9,4 +9,5 @@ public interface IReservationService
     Task CreateAsync(Reservation reservation);
     Task UpdateAsync(Reservation reservation);
     Task DeleteAsync(string reservationId);
+    Task<bool> ReservationsExistsWithRestaurant(string restaurantId, string reservationId);
 }

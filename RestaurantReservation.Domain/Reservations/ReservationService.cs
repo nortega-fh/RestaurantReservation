@@ -54,4 +54,9 @@ public class ReservationService : IReservationService
     {
         await _reservationRepository.DeleteAsync(reservationId);
     }
+
+    public async Task<bool> ReservationsExistsWithRestaurant(string restaurantId, string reservationId)
+    {
+        return await GetByIdAsync(restaurantId, reservationId) is not null;
+    }
 }
