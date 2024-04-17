@@ -34,14 +34,16 @@ public class EmployeeController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllEmployees([FromRoute] string restaurantId,
         [FromQuery] int pageSize = DefaultPageSize,
-        [FromQuery] int pageNumber = DefaultPageNumber)
+        [FromQuery] int pageNumber = DefaultPageNumber,
+        [FromQuery] string? role = null)
     {
         if (!await _restaurantService.RestaurantExistsWithIdAsync(restaurantId))
         {
             return NotFound("Restaurant not found");
         }
         var employees = _mapper
-            .Map<IEnumerable<EmployeeResponse>>(await _employeeService.GetAllAsync(pageSize, pageNumber)).ToList();
+            .Map<IEnumerable<EmployeeResponse>>(await _employeeService.GetAllAsync(pageSize, pageNumber, role))
+            .ToList();
         return Ok(new CollectionResponse<EmployeeResponse>
         {
             Metadata = new ResponseMetadata(employees.Count, pageSize, pageNumber),

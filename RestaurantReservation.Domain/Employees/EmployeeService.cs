@@ -9,9 +9,9 @@ public class EmployeeService : IEmployeeService
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
-    public async Task<IEnumerable<Employee>> GetAllAsync(int pageSize, int pageNumber)
+    public async Task<IEnumerable<Employee>> GetAllAsync(int pageSize, int pageNumber, string? role)
     {
-        return await _repository.GetAllAsync(pageSize, pageNumber);
+        return await _repository.GetAllAsync(pageSize, pageNumber, role);
     }
 
     public async Task<Employee?> GetByIdAsync(string employeeId)
