@@ -1,14 +1,16 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RestaurantReservation.API.Contracts.Requests;
-using RestaurantReservation.API.Contracts.Responses;
-using RestaurantReservation.Domain.Models;
-using RestaurantReservation.Domain.Services;
+using RestaurantReservation.API.Contracts.Requests.Customers;
+using RestaurantReservation.API.Contracts.Responses.API;
+using RestaurantReservation.API.Contracts.Responses.Customers;
+using RestaurantReservation.Domain.Customers;
 
 namespace RestaurantReservation.API.Controllers;
 
 [ApiController]
 [Route("/api/customers")]
+[Authorize]
 public class CustomerController : ControllerBase
 {
     private const int DefaultPageSize = 20;
@@ -25,24 +27,52 @@ public class CustomerController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAllCustomers(int pageNumber = DefaultPageNumber, int pageSize = DefaultPageSize)
     {
-        var response = new CollectionResponse<Customer>();
-        var items = (await _customerService.GetAllAsync(pageNumber, pageSize)).ToList();
-        response.Metadata = new ResponseMetadata(items.Count, pageSize, pageNumber);
-        response.Items = items;
-        return Ok(response);
+        var items = _mapper.Map<List<CustomerResponse>>(await _customerService.GetAllAsync(pageNumber, pageSize));
+        return Ok(new CollectionResponse<CustomerResponse>
+        {
+            Metadata = new ResponseMetadata(items.Count, pageSize, pageNumber),
+            Items = items
+        });
+    }
+
+    [HttpGet("{customerId}")]
+    public async Task<IActionResult> GetCustomerById(string customerId)
+    {
+        var customer = await _customerService.GetByIdAsync(customerId);
+        return customer is null ? NotFound() : Ok(_mapper.Map<CustomerResponse>(customer));
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateCustomer(CustomerCreate createdCustomer)
     {
-        var customer = _mapper.Map<Customer>(createdCustomer);
-        await _customerService.CreateAsync(customer);
-        return Created(Request.Path, customer);
+        if (!await _customerService.UserExistsWithUsernameAsync(createdCustomer.Username))
+        {
+            return NotFound($"Username {createdCustomer.Username} doesn't exist");
+        }
+        var customer = await _customerService.CreateAsync(_mapper.Map<Customer>(createdCustomer));
+        return Created(Request.Path, _mapper.Map<CustomerResponse>(customer));
+    }
+
+    [HttpPut("{customerId}")]
+    public async Task<IActionResult> UpdateCustomer(string customerId, CustomerUpdate updatedCustomer)
+    {
+        var customer = await _customerService.GetByIdAsync(customerId);
+        if (customer is null)
+        {
+            return NotFound();
+        }
+        _mapper.Map(updatedCustomer, customer);
+        await _customerService.UpdateAsync(customer);
+        return NoContent();
     }
 
     [HttpDelete("{customerId}")]
     public async Task<IActionResult> DeleteCustomer(string customerId)
     {
+        if (!await _customerService.CustomerExistsWithIdAsync(customerId))
+        {
+            return NotFound();
+        }
         await _customerService.DeleteAsync(customerId);
         return NoContent();
     }

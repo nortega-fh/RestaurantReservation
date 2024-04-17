@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using RestaurantReservation.API.Contracts.Responses;
+using RestaurantReservation.API.Contracts.Responses.API;
 
 namespace RestaurantReservation.API.Filters;
 

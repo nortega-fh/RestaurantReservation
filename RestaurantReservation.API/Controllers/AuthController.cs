@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using RestaurantReservation.API.AuthHandlers;
-using RestaurantReservation.API.Contracts.Requests;
-using RestaurantReservation.Domain.Models;
-using RestaurantReservation.Domain.Services;
+using RestaurantReservation.API.Contracts.Requests.Users;
+using RestaurantReservation.API.Contracts.Responses.API;
+using RestaurantReservation.Domain.Users;
 
 namespace RestaurantReservation.API.Controllers;
 
@@ -25,6 +25,18 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public async Task<IActionResult> Register(UserCreate createdUser)
     {
+        if (await _userService.UserExistsAsync(createdUser.Username))
+        {
+            var error = new ErrorResponse
+            {
+                RequestPath = Request.Path,
+                Errors = new Dictionary<string, string[]>
+                {
+                    { "username", new[] { $"The username {createdUser.Username} is already registered" } }
+                }
+            };
+            return BadRequest(error);
+        }
         var user = await _userService.CreateAsync(_mapper.Map<User>(createdUser));
         return Created(Request.Path, _tokenGenerator.GenerateTokenAsync(user));
     }
@@ -32,10 +44,17 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login(UserLogin loginCredentials)
     {
-        var user = await _userService.GetAsync(loginCredentials.Username, loginCredentials.Password);
+        var user = await _userService.GetByCredentialsAsync(loginCredentials.Username, loginCredentials.Password);
         if (user is null)
         {
-            return Unauthorized("Invalid credentials");
+            return Unauthorized(new ErrorResponse
+            {
+                RequestPath = Request.Path,
+                Errors = new Dictionary<string, string[]>
+                {
+                    { "authentication", new[] { "Invalid credentials" } }
+                }
+            });
         }
         return Created(Request.Path, _tokenGenerator.GenerateTokenAsync(user));
     }

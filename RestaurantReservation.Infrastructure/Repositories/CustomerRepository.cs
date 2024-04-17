@@ -1,58 +1,58 @@
-﻿using AutoMapper;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using MongoDB.Driver.Linq;
-using RestaurantReservation.Domain.Repositories;
-using RestaurantReservation.Infrastructure.Entities;
+using RestaurantReservation.Domain.Customers;
+using RestaurantReservation.Domain.Users;
 
 namespace RestaurantReservation.Infrastructure.Repositories;
 
 public class CustomerRepository : ICustomerRepository
 {
     private readonly IMongoCollection<Customer> _collection;
-    private readonly IMapper _mapper;
     private readonly IUserRepository _userRepository;
 
-    public CustomerRepository(IRestaurantReservationDatabase database, IUserRepository userRepository, IMapper mapper)
+    public CustomerRepository(IRestaurantReservationDatabase database, IUserRepository userRepository)
     {
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-        _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _collection = database.GetDatabase().GetCollection<Customer>("Customers");
     }
 
-    public async Task<IEnumerable<Domain.Models.Customer>> GetAllAsync(int pageNumber, int pageSize)
+    public async Task<IEnumerable<Customer>> GetAllAsync(int pageNumber, int pageSize)
     {
-        return _mapper.Map<IEnumerable<Domain.Models.Customer>>(await _collection.AsQueryable()
+        return await _collection.AsQueryable()
             .Where(_ => true)
             .Skip(pageNumber * pageSize - pageSize)
             .Take(pageSize)
-            .ToListAsync());
+            .ToListAsync();
     }
 
-    public async Task<Domain.Models.Customer?> GetByIdAsync(string id)
+    public async Task<Customer?> GetByIdAsync(string id)
     {
-        return _mapper.Map<Domain.Models.Customer>(await _collection.AsQueryable()
+        return await _collection.AsQueryable()
             .Where(customer => customer.Id.Equals(id))
-            .FirstAsync());
+            .FirstOrDefaultAsync();
     }
 
-    public async Task CreateAsync(Domain.Models.Customer customer)
+    public async Task<Customer?> CreateAsync(Customer customer)
     {
         var relatedUser = await _userRepository.GetByUsernameAsync(customer.Username);
         if (relatedUser is null)
         {
-            return;
+            return null;
         }
-        var customerEntity = _mapper.Map<Customer>(customer);
-        customerEntity.UserId = relatedUser.Id;
-        await _collection.InsertOneAsync(customerEntity);
+        customer.FirstName = relatedUser.FirstName;
+        customer.LastName = relatedUser.LastName;
+        customer.Password = relatedUser.Password;
+        await _collection.InsertOneAsync(customer);
+        return await _collection
+            .FindAsync(Builders<Customer>.Filter.Eq(c => c.Username, customer.Username))
+            .Result
+            .FirstAsync();
     }
 
-    public async Task UpdateAsync(string id, Domain.Models.Customer customer)
+    public async Task UpdateAsync(Customer customer)
     {
-        var filter = Builders<Customer>.Filter.Eq(c => c.Id, id);
-        var oldData = await _collection.FindAsync(filter).Result.FirstAsync();
-        var newData = _mapper.Map(customer, oldData);
-        await _collection.FindOneAndReplaceAsync(filter, newData);
+        var filter = Builders<Customer>.Filter.Eq(c => c.Id, customer.Id);
+        await _collection.FindOneAndReplaceAsync(filter, customer);
     }
 
     public async Task DeleteAsync(string id)
