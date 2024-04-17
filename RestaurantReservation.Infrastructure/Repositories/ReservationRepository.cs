@@ -14,16 +14,21 @@ public class ReservationRepository : IReservationRepository
         _collection = database.GetDatabase().GetCollection<Reservation>("Reservations");
     }
 
-    public async Task<List<Reservation>> GetAllAsync(string restaurantId, int pageSize, int pageNumber)
+    public async Task<List<Reservation>> GetAllAsync(string restaurantId, int pageSize, int pageNumber,
+        string? customerId)
     {
-        return await GetReservationPageListByCondition(reservation => reservation.RestaurantId.Equals(restaurantId),
+        return await GetReservationPageListByCondition(
+            reservation => reservation.RestaurantId.Equals(restaurantId) &&
+                           (customerId == null || reservation.CustomerId.Equals(customerId)),
             pageSize, pageNumber);
     }
 
-    public async Task<List<Reservation>> GetAllAsync(string restaurantId, string tableId, int pageSize, int pageNumber)
+    public async Task<List<Reservation>> GetAllAsync(string restaurantId, string tableId, int pageSize, int pageNumber,
+        string? customerId)
     {
         return await GetReservationPageListByCondition(
-            reservation => restaurantId.Equals(reservation.RestaurantId) && tableId.Equals(reservation.TableId),
+            reservation => restaurantId.Equals(reservation.RestaurantId) && tableId.Equals(reservation.TableId) &&
+                           (customerId == null || reservation.CustomerId.Equals(customerId)),
             pageSize, pageNumber);
     }
 

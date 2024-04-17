@@ -14,5 +14,6 @@ public class ReservationCreateValidator : AbstractValidator<ReservationCreate>
             .WithMessage("Reservation end date should be greater than reservation start date")
             .Must((reservation, endDate) => endDate.Date == reservation.StartDate.Date)
             .WithMessage("The reservation's end date should be at the same day than the reservation's start date");
+        RuleFor(reservation => reservation.CustomerId).MaximumLength(50);
     }
 }

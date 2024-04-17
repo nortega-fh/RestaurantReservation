@@ -14,14 +14,16 @@ public class ReservationService : IReservationService
                                           throw new ArgumentNullException(nameof(reservationAvailabilityChecker));
     }
 
-    public async Task<List<Reservation>> GetAllAsync(string restaurantId, int pageSize, int pageNumber)
+    public async Task<List<Reservation>> GetAllAsync(string restaurantId, int pageSize, int pageNumber,
+        string? customerId)
     {
-        return await _reservationRepository.GetAllAsync(restaurantId, pageSize, pageNumber);
+        return await _reservationRepository.GetAllAsync(restaurantId, pageSize, pageNumber, customerId);
     }
 
-    public async Task<List<Reservation>> GetAllAsync(string restaurantId, string tableId, int pageSize, int pageNumber)
+    public async Task<List<Reservation>> GetAllAsync(string restaurantId, string tableId, int pageSize, int pageNumber,
+        string? customerId)
     {
-        return await _reservationRepository.GetAllAsync(restaurantId, tableId, pageSize, pageNumber);
+        return await _reservationRepository.GetAllAsync(restaurantId, tableId, pageSize, pageNumber, customerId);
     }
 
     public async Task<Reservation?> GetByIdAsync(string restaurantId, string reservationId)

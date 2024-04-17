@@ -33,10 +33,12 @@ public class TableReservationController : ControllerBase
 
     [HttpGet]
     public async Task<IActionResult> GetAllTableReservations([FromRoute] string restaurantId,
-        [FromRoute] string tableId, [FromQuery] int pageSize = DefaultPageSize,
-        [FromQuery] int pageNumber = DefaultPageNumber)
+        [FromRoute] string tableId,
+        [FromQuery] int pageSize = DefaultPageSize,
+        [FromQuery] int pageNumber = DefaultPageNumber,
+        [FromQuery] string? customer = null)
     {
-        var reservations = await _reservationService.GetAllAsync(restaurantId, tableId, pageSize, pageNumber);
+        var reservations = await _reservationService.GetAllAsync(restaurantId, tableId, pageSize, pageNumber, customer);
         return Ok(new CollectionResponse<ReservationResponse>
         {
             Metadata = new ResponseMetadata(reservations.Count, pageSize, pageNumber),

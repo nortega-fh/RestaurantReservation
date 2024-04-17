@@ -2,8 +2,10 @@
 
 public interface IReservationRepository
 {
-    Task<List<Reservation>> GetAllAsync(string restaurantId, int pageSize, int pageNumber);
-    Task<List<Reservation>> GetAllAsync(string restaurantId, string tableId, int pageSize, int pageNumber);
+    Task<List<Reservation>> GetAllAsync(string restaurantId, int pageSize, int pageNumber, string? customerId);
+
+    Task<List<Reservation>> GetAllAsync(string restaurantId, string tableId, int pageSize, int pageNumber,
+        string? customerId);
 
     Task<List<Reservation>> GetByTableAndBetweenDates(string tableId, DateTime startDate,
         DateTime endDate);

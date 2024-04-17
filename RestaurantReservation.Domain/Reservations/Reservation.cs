@@ -11,5 +11,8 @@ public class Reservation
     public int PartySize { get; set; }
 
     public string RestaurantId { get; set; } = string.Empty;
+
     public string TableId { get; set; } = string.Empty;
+
+    public string CustomerId { get; set; } = string.Empty;
 }
