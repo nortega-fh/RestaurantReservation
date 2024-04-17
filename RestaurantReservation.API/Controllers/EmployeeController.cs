@@ -62,6 +62,20 @@ public class EmployeeController : ControllerBase
         return employee is null ? NotFound() : Ok(_mapper.Map<EmployeeResponse>(employee));
     }
 
+    [HttpGet("{employeeId}/average-order-amount")]
+    public async Task<IActionResult> GetEmployeeAverageOrderAmount([FromRoute] string restaurantId, string employeeId)
+    {
+        if (!await _restaurantService.RestaurantExistsWithIdAsync(restaurantId) ||
+            !await _employeeService.ExistsWithIdAsync(employeeId))
+        {
+            return NotFound();
+        }
+        return Ok(new AverageOrderAmountResponse
+        {
+            AverageOrderAmount = await _employeeService.GetEmployeeAverageOrderAmountAsync(employeeId)
+        });
+    }
+
     [HttpPost]
     public async Task<IActionResult> CreateEmployee([FromRoute] string restaurantId,
         [FromBody] EmployeeCreate employeeCreate)

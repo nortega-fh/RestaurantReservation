@@ -9,9 +9,7 @@ public interface IOrderService
     Task<List<MenuItem>> GetAllMenuItemsByReservationAsync(string reservationId, int pageSize, int pageNumber,
         MenuItemOrderableProperties orderBy);
 
-    Task<List<Order>> GetAllOrdersByEmployee(string employeeId, int pageSize, int pageNumber);
     Task<Order?> GetByIdAndReservationId(string orderId, string reservationId);
-    Task<Order?> GetByIdAndEmployeeId(string orderId, string employeeId);
     Task Create(Order order);
     Task Update(string orderId, Order order);
     Task Delete(string orderId);
@@ -19,4 +17,5 @@ public interface IOrderService
     Task AddOrderMenuItemAsync(Order order, OrderMenuItem orderMenuItem);
     Task UpdateOrderMenuItemAsync(Order order, OrderMenuItem orderMenuItem);
     Task DeleteOrderMenuItemAsync(Order order, string menuItemId);
+    Task<decimal> GetAverageOrderAmountByEmployeeAsync(string employeeId);
 }

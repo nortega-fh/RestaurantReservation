@@ -39,26 +39,21 @@ public class OrderRepository : IOrderRepository
             .ToListAsync();
     }
 
-    public async Task<List<Order>> GetAllByEmployee(string employeeId, int pageSize, int pageNumber)
+    public async Task<decimal> GetAverageTotalAmountOrderMenuItemsByEmployeeAsync(string employeeId)
     {
-        return await _collection.AsQueryable()
-            .Where(order => employeeId.Equals(order.EmployeeId))
-            .Skip(pageNumber * pageSize - pageSize)
-            .Take(pageSize)
+        var orders = await _collection.AsQueryable()
+            .Where(order => order.EmployeeId.Equals(employeeId))
             .ToListAsync();
+        return orders.Average(order => order.TotalAmount);
+        // return await _collection.AsQueryable()
+        //        .Where(order => order.EmployeeId.Equals(employeeId))
+        //        .AverageAsync();
     }
 
     public async Task<Order?> GetByIdAndReservationId(string orderId, string reservationId)
     {
         return await _collection.AsQueryable()
             .Where(order => orderId.Equals(order.Id) && reservationId.Equals(order.ReservationId))
-            .SingleOrDefaultAsync();
-    }
-
-    public async Task<Order?> GetByIdAndEmployeeId(string orderId, string employeeId)
-    {
-        return await _collection.AsQueryable()
-            .Where(order => orderId.Equals(order.Id) && employeeId.Equals(order.EmployeeId))
             .SingleOrDefaultAsync();
     }
 

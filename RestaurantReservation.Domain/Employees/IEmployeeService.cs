@@ -8,4 +8,5 @@ public interface IEmployeeService
     Task UpdateAsync(Employee employee);
     Task DeleteAsync(string employeeId);
     Task<bool> ExistsWithIdAsync(string employeeId);
+    Task<decimal> GetEmployeeAverageOrderAmountAsync(string employeeId);
 }
