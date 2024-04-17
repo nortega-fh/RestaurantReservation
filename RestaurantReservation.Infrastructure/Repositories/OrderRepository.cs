@@ -1,5 +1,6 @@
 ﻿using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using RestaurantReservation.Domain.MenuItems;
 using RestaurantReservation.Domain.Orders;
 
 namespace RestaurantReservation.Infrastructure.Repositories;
@@ -17,6 +18,22 @@ public class OrderRepository : IOrderRepository
     {
         return await _collection.AsQueryable()
             .Where(order => reservationId.Equals(order.ReservationId))
+            .Skip(pageNumber * pageSize - pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+    }
+
+    public async Task<List<MenuItem>> GetAllMenuItemsByReservationAsync(string reservationId, int pageSize,
+        int pageNumber, MenuItemOrderableProperties orderBy)
+    {
+        var query = _collection.AsQueryable()
+            .Where(order => reservationId.Equals(order.ReservationId))
+            .SelectMany(order => order.Items)
+            .Select(orderMenuItem => orderMenuItem.Item);
+        query = orderBy is MenuItemOrderableProperties.Name
+            ? query.OrderBy(item => item.Name)
+            : query.OrderBy(item => item.Price);
+        return await query
             .Skip(pageNumber * pageSize - pageSize)
             .Take(pageSize)
             .ToListAsync();
