@@ -23,19 +23,9 @@ public class OrderService : IOrderService
         return await _orderRepository.GetAllMenuItemsByReservationAsync(reservationId, pageSize, pageNumber, orderBy);
     }
 
-    public async Task<List<Order>> GetAllOrdersByEmployee(string employeeId, int pageSize, int pageNumber)
-    {
-        return await _orderRepository.GetAllByEmployee(employeeId, pageSize, pageNumber);
-    }
-
     public async Task<Order?> GetByIdAndReservationId(string orderId, string reservationId)
     {
         return await _orderRepository.GetByIdAndReservationId(orderId, reservationId);
-    }
-
-    public async Task<Order?> GetByIdAndEmployeeId(string orderId, string employeeId)
-    {
-        return await _orderRepository.GetByIdAndEmployeeId(orderId, employeeId);
     }
 
     public async Task Create(Order order)
@@ -81,5 +71,10 @@ public class OrderService : IOrderService
         order.TotalAmount =
             order.Items.Aggregate(0m, (total, menuItem) => total + menuItem.Quantity * menuItem.Item.Price);
         await Update(order.Id, order);
+    }
+
+    public async Task<decimal> GetAverageOrderAmountByEmployeeAsync(string employeeId)
+    {
+        return await _orderRepository.GetAverageTotalAmountOrderMenuItemsByEmployeeAsync(employeeId);
     }
 }
