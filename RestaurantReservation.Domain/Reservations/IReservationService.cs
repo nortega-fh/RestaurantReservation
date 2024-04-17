@@ -1,4 +1,6 @@
-﻿namespace RestaurantReservation.Domain.Reservations;
+﻿using RestaurantReservation.Domain.MenuItems;
+
+namespace RestaurantReservation.Domain.Reservations;
 
 public interface IReservationService
 {
@@ -9,6 +11,10 @@ public interface IReservationService
 
     Task<Reservation?> GetByIdAsync(string restaurantId, string reservationId);
     Task<Reservation?> GetByIdAsync(string restaurantId, string tableId, string reservationId);
+
+    Task<List<MenuItem>> GetReservationMenuItemsAsync(string reservationId, int pageSize, int pageNumber,
+        MenuItemOrderableProperties orderBy);
+
     Task CreateAsync(Reservation reservation);
     Task UpdateAsync(Reservation reservation);
     Task DeleteAsync(string reservationId);

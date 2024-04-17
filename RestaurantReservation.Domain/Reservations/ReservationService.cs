@@ -1,17 +1,23 @@
-﻿namespace RestaurantReservation.Domain.Reservations;
+﻿using RestaurantReservation.Domain.MenuItems;
+using RestaurantReservation.Domain.Orders;
+
+namespace RestaurantReservation.Domain.Reservations;
 
 public class ReservationService : IReservationService
 {
+    private readonly IOrderService _orderService;
     private readonly IReservationAvailabilityChecker _reservationAvailabilityChecker;
     private readonly IReservationRepository _reservationRepository;
 
     public ReservationService(IReservationRepository reservationRepository,
-        IReservationAvailabilityChecker reservationAvailabilityChecker)
+        IReservationAvailabilityChecker reservationAvailabilityChecker,
+        IOrderService orderService)
     {
         _reservationRepository =
             reservationRepository ?? throw new ArgumentNullException(nameof(reservationRepository));
         _reservationAvailabilityChecker = reservationAvailabilityChecker ??
                                           throw new ArgumentNullException(nameof(reservationAvailabilityChecker));
+        _orderService = orderService ?? throw new ArgumentNullException(nameof(orderService));
     }
 
     public async Task<List<Reservation>> GetAllAsync(string restaurantId, int pageSize, int pageNumber,
@@ -34,6 +40,12 @@ public class ReservationService : IReservationService
     public async Task<Reservation?> GetByIdAsync(string restaurantId, string tableId, string reservationId)
     {
         return await _reservationRepository.GetByIdAsync(restaurantId, tableId, reservationId);
+    }
+
+    public async Task<List<MenuItem>> GetReservationMenuItemsAsync(string reservationId, int pageSize, int pageNumber,
+        MenuItemOrderableProperties orderBy)
+    {
+        return await _orderService.GetAllMenuItemsByReservationAsync(reservationId, pageSize, pageNumber, orderBy);
     }
 
     public async Task CreateAsync(Reservation reservation)

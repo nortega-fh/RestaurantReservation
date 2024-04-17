@@ -1,4 +1,6 @@
-﻿namespace RestaurantReservation.Domain.Orders;
+﻿using RestaurantReservation.Domain.MenuItems;
+
+namespace RestaurantReservation.Domain.Orders;
 
 public class OrderService : IOrderService
 {
@@ -12,6 +14,13 @@ public class OrderService : IOrderService
     public async Task<List<Order>> GetAllOrdersByReservation(string reservationId, int pageSize, int pageNumber)
     {
         return await _orderRepository.GetAllByReservation(reservationId, pageSize, pageNumber);
+    }
+
+    public async Task<List<MenuItem>> GetAllMenuItemsByReservationAsync(string reservationId, int pageSize,
+        int pageNumber,
+        MenuItemOrderableProperties orderBy)
+    {
+        return await _orderRepository.GetAllMenuItemsByReservationAsync(reservationId, pageSize, pageNumber, orderBy);
     }
 
     public async Task<List<Order>> GetAllOrdersByEmployee(string employeeId, int pageSize, int pageNumber)

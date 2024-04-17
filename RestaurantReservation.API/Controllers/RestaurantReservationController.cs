@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RestaurantReservation.API.Contracts.Responses.API;
+using RestaurantReservation.API.Contracts.Responses.MenuItems;
 using RestaurantReservation.API.Contracts.Responses.Reservations;
+using RestaurantReservation.Domain.MenuItems;
 using RestaurantReservation.Domain.Reservations;
 
 namespace RestaurantReservation.API.Controllers;
@@ -42,6 +44,36 @@ public class RestaurantReservationController : ControllerBase
     {
         var reservation = await _reservationService.GetByIdAsync(restaurantId, reservationId);
         return reservation is null ? NotFound() : Ok(_mapper.Map<ReservationResponse>(reservation));
+    }
+
+    [HttpGet("{reservationId}/menu-items")]
+    public async Task<IActionResult> GetReservationMenuItems([FromRoute] string restaurantId,
+        [FromRoute] string reservationId,
+        [FromQuery] int pageSize = DefaultPageSize,
+        [FromQuery] int pageNumber = DefaultPageNumber,
+        [FromQuery] string? orderBy = null)
+    {
+        if (!await _reservationService.ReservationsExistsWithRestaurant(restaurantId, reservationId))
+        {
+            return NotFound();
+        }
+        var isOrderProperty = Enum.TryParse<MenuItemOrderableProperties>(orderBy, true, out var orderProperty);
+        if (orderBy is null)
+        {
+            isOrderProperty = true;
+            orderProperty = MenuItemOrderableProperties.Name;
+        }
+        if (!isOrderProperty)
+        {
+            return BadRequest($"The list can't be ordered by the property {orderBy}");
+        }
+        var menuItems =
+            await _reservationService.GetReservationMenuItemsAsync(reservationId, pageSize, pageNumber, orderProperty);
+        return Ok(new CollectionResponse<MenuItemResponse>
+        {
+            Metadata = new ResponseMetadata(menuItems.Count, pageSize, pageNumber),
+            Items = _mapper.Map<IEnumerable<MenuItemResponse>>(menuItems)
+        });
     }
 
     [HttpDelete("{reservationId}")]
