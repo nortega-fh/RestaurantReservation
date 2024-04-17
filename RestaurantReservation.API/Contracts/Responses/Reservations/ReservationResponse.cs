@@ -6,4 +6,5 @@ public class ReservationResponse
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public string TableId { get; set; } = string.Empty;
+    public string CustomerId { get; set; } = string.Empty;
 }
