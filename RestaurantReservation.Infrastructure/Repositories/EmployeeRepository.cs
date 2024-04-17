@@ -16,10 +16,10 @@ public class EmployeeRepository : IEmployeeRepository
         _collection = database.GetDatabase().GetCollection<Employee>("Employees");
     }
 
-    public async Task<IEnumerable<Employee>> GetAllAsync(int pageSize, int pageNumber)
+    public async Task<IEnumerable<Employee>> GetAllAsync(int pageSize, int pageNumber, string? role)
     {
         return await _collection.AsQueryable()
-            .Where(_ => true)
+            .Where(employee => role == null || employee.Position.Contains(role, StringComparison.CurrentCultureIgnoreCase))
             .Skip(pageNumber * pageSize - pageSize)
             .Take(pageSize)
             .ToListAsync();
